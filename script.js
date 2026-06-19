@@ -300,7 +300,7 @@ let food;
 let direction;
 let nextDirection;
 let snakeScore;
-const snakeTarget = 20;
+const snakeTarget = 10;
 const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 const boxSize = 15;
