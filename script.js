@@ -331,8 +331,8 @@ function drawSnakeGame() {
   if (direction === "down") head.y++;
 
   if (
-    head.x < 0 || head.x >= 20 ||
-    head.y < 0 || head.y >= 20 ||
+    head.x < 0 || head.x >= 10 ||
+    head.y < 0 || head.y >= 10 ||
     snake.some(part => part.x === head.x && part.y === head.y)
   ) {
     document.getElementById("snakeMessage").innerText = "Ulangi lagi";
