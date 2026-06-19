@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- LOADING -->
+  <div id="loading" class="loading">
+    <p id="loadingText">Loading...</p>
+  </div>
+
+  <!-- MUSIK -->
+  <audio id="musicMain" src="assets/music/everything-u-are.mp3" loop></audio>
+  <audio id="musicFinal" src="assets/music/akuma-no-ko.mp3" loop></audio>
+
+  <main class="app">
+
+    <!-- HALAMAN 1 -->
+    <section class="screen" id="screen-1">
+      <div class="card">
+        <h1>Kamu marah<br>sama aku?</h1>
+        <div class="button-row">
+          <button class="btn primary" onclick="goToScreen(2)">Ya</button>
+          <button class="btn outline runaway">Tidak</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HALAMAN 2 -->
+    <section class="screen" id="screen-2">
+      <div class="card">
+        <p class="envelope-hint">tekan suratnya</p>
+        <div class="envelope" onclick="openEnvelope()">
+          <div class="envelope-flap"></div>
+          <div class="envelope-body"></div>
+        </div>
+
+        <div class="letter" id="questLetter">
+          <p>Aku punya kejutan.</p>
+          <p>Tapi selesaikan questnya dulu.</p>
+        </div>
+
+        <div class="button-row">
+          <button class="btn primary" onclick="goToScreen(3)">Ya</button>
+          <button class="btn outline runaway">Tidak</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEVEL 1 PIN -->
+    <section class="screen" id="screen-3">
+      <div class="card">
+        <h2>Secret PIN</h2>
+
+        <div class="pin-display" id="pinDisplay">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+
+        <div class="keypad">
+          <button onclick="pressPin('1')">1</button>
+          <button onclick="pressPin('2')">2</button>
+          <button onclick="pressPin('3')">3</button>
+          <button onclick="pressPin('4')">4</button>
+          <button onclick="pressPin('5')">5</button>
+          <button onclick="pressPin('6')">6</button>
+          <button onclick="pressPin('7')">7</button>
+          <button onclick="pressPin('8')">8</button>
+          <button onclick="pressPin('9')">9</button>
+          <button onclick="deletePin()">⌫</button>
+          <button onclick="pressPin('0')">0</button>
+          <button onclick="checkPin()">OK</button>
+        </div>
+
+        <p class="message" id="pinMessage"></p>
+      </div>
+    </section>
+
+    <!-- LEVEL 2 MEMORY -->
+    <section class="screen" id="screen-4">
+      <div class="card">
+        <h2>Find Couple</h2>
+        <p class="timer"><span id="memoryTimer">60</span> detik</p>
+        <div class="memory-grid" id="memoryGrid"></div>
+        <p class="message" id="memoryMessage"></p>
+      </div>
+    </section>
+
+    <!-- LEVEL 3 KOTAK -->
+    <section class="screen" id="screen-5">
+      <div class="card">
+        <h2>Find Ticket</h2>
+
+        <div class="box-game">
+          <button class="mystery-box" onclick="chooseBox(0)"></button>
+          <button class="mystery-box" onclick="chooseBox(1)"></button>
+          <button class="mystery-box" onclick="chooseBox(2)"></button>
+        </div>
+
+        <p class="message" id="boxMessage"></p>
+      </div>
+    </section>
+
+    <!-- LEVEL 4 HATI -->
+    <section class="screen" id="screen-6">
+      <div class="card">
+        <h2>Heart Bom</h2>
+
+        <div class="heart-pump">
+          <div class="heart-fill" id="heartFill"></div>
+          <span id="heartPercent">0%</span>
+        </div>
+
+        <button class="btn primary wide" id="pumpButton">
+          TEKAN & TAHAN
+        </button>
+
+        <p class="message" id="heartMessage"></p>
+      </div>
+    </section>
+
+    <!-- LEVEL 5 ULAR -->
+    <section class="screen" id="screen-7">
+      <div class="card">
+        <h2>Snake Hunter</h2>
+
+        <div class="snake-info">
+          <span>Score: <b id="snakeScore">0</b></span>
+          <span>Target: 20</span>
+        </div>
+
+        <canvas id="snakeCanvas" width="300" height="300"></canvas>
+
+        <div class="snake-control">
+          <button onclick="changeDirection('up')">↑</button>
+          <div>
+            <button onclick="changeDirection('left')">←</button>
+            <button onclick="changeDirection('down')">↓</button>
+            <button onclick="changeDirection('right')">→</button>
+          </div>
+        </div>
+
+        <p class="message" id="snakeMessage"></p>
+      </div>
+    </section>
+
+    <!-- LEVEL 6 PERBEDAAN -->
+    <section class="screen" id="screen-8">
+      <div class="card difference-card">
+        <h2>Fint Mistake</h2>
+        <p class="difference-instruction">Temukan 5 perbedaan</p>
+
+        <div class="difference-game">
+          <div class="difference-image image-a" role="img" aria-label="Gambar pertama taman dan danau"></div>
+
+          <div class="difference-image image-b" role="img" aria-label="Gambar kedua taman dan danau">
+            <button class="diff-point p1" onclick="findDifference(1)"></button>
+            <button class="diff-point p2" onclick="findDifference(2)"></button>
+            <button class="diff-point p3" onclick="findDifference(3)"></button>
+            <button class="diff-point p4" onclick="findDifference(4)"></button>
+            <button class="diff-point p5" onclick="findDifference(5)"></button>
+          </div>
+        </div>
+
+        <div class="diff-progress" id="diffProgress">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <p class="message" id="diffMessage"></p>
+      </div>
+    </section>
+
+    <!-- HAPPY BIRTHDAY -->
+    <section class="screen" id="screen-9">
+      <div class="card final-card">
+        <h2>Present from me</h2>
+        <div class="final-letter">
+          <h1>Happy Birthday</h1>
+
+          <p class="jp">
+            正しさとは<br>
+            自分のこと<br>
+            強く信じることだ
+          </p>
+
+          <p>
+            Sekai wa zankoku da<br>
+            soredemo kimi wo aisu yo
+          </p>
+
+          <p>
+            Dunia memang kejam<br>
+            tapi aku tetap mencintaimu
+          </p>
+        </div>
+
+        <button class="btn primary wide" onclick="goToScreen(10)">Lanjut</button>
+      </div>
+    </section>
+
+    <!-- LINK AKHIR -->
+    <section class="screen" id="screen-10">
+      <div class="card">
+        <h1>What u must know</h1>
+        <p class="last-page-text">Ini untukmu</p>
+
+        <a
+          class="btn primary wide link-btn"
+          href="https://vt.tiktok.com/ZSQnKPcdw/"
+          target="_blank"
+        >
+          Buka Kejutan
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- POPUP -->
+  <div class="popup" id="popup">
+    <div class="popup-box">
+      <p id="popupText"></p>
+      <button class="btn primary" onclick="closePopup()">Lanjut</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
