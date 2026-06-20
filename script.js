@@ -294,33 +294,51 @@ function updateHeart() {
 }
 
 /* LEVEL 5 - SNAKE */
-let snakeInterval;
-let snake;
-let food;
-let direction;
-let nextDirection;
-let snakeScore;
+/* LEVEL 5 - SNAKE */
+let snakeInterval = null;
+let snakeRestartTimeout = null;
+let snake = [];
+let food = null;
+let direction = null;
+let nextDirection = null;
+let snakeScore = 0;
+
 const snakeTarget = 10;
+const snakeGrid = 20;
 const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
-const boxSize = 15;
+const boxSize = canvas.width / snakeGrid;
 
 function startSnakeGame() {
   clearInterval(snakeInterval);
+  clearTimeout(snakeRestartTimeout);
+
+  snakeInterval = null;
+  snakeRestartTimeout = null;
 
   snake = [{ x: 10, y: 10 }];
   food = randomFood();
-  direction = "right";
-  nextDirection = "right";
+  direction = null;
+  nextDirection = null;
   snakeScore = 0;
 
   document.getElementById("snakeScore").innerText = snakeScore;
   document.getElementById("snakeMessage").innerText = "";
 
-  snakeInterval = setInterval(drawSnakeGame, 120);
+  drawSnakeBoard();
+
+  snakeInterval = setInterval(drawSnakeGame, 140);
 }
 
 function drawSnakeGame() {
+  if (!snake.length || !food) return;
+
+  // Snake tidak langsung jalan sebelum tombol arah ditekan
+  if (!nextDirection) {
+    drawSnakeBoard();
+    return;
+  }
+
   direction = nextDirection;
 
   const head = { ...snake[0] };
@@ -330,13 +348,16 @@ function drawSnakeGame() {
   if (direction === "up") head.y--;
   if (direction === "down") head.y++;
 
-  if (
-    head.x < 0 || head.x >= 10 ||
-    head.y < 0 || head.y >= 10 ||
-    snake.some(part => part.x === head.x && part.y === head.y)
-  ) {
-    document.getElementById("snakeMessage").innerText = "Ulangi lagi";
-    setTimeout(startSnakeGame, 800);
+  const hitWall =
+    head.x < 0 ||
+    head.x >= snakeGrid ||
+    head.y < 0 ||
+    head.y >= snakeGrid;
+
+  const hitBody = snake.some(part => part.x === head.x && part.y === head.y);
+
+  if (hitWall || hitBody) {
+    gameOverSnake();
     return;
   }
 
@@ -349,6 +370,7 @@ function drawSnakeGame() {
 
     if (snakeScore >= snakeTarget) {
       clearInterval(snakeInterval);
+      snakeInterval = null;
       showPopup("Sabar yaa, dikit lagiii", 8);
       return;
     }
@@ -356,36 +378,93 @@ function drawSnakeGame() {
     snake.pop();
   }
 
+  drawSnakeBoard();
+}
+
+function drawSnakeBoard() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  ctx.fillStyle = "#050505";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Ular
   ctx.fillStyle = "#ff4fa1";
   snake.forEach(part => {
-    ctx.fillRect(part.x * boxSize, part.y * boxSize, boxSize - 2, boxSize - 2);
+    ctx.fillRect(
+      part.x * boxSize + 1,
+      part.y * boxSize + 1,
+      boxSize - 2,
+      boxSize - 2
+    );
   });
 
+  // Food
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(food.x * boxSize, food.y * boxSize, boxSize - 2, boxSize - 2);
+  ctx.beginPath();
+  ctx.arc(
+    food.x * boxSize + boxSize / 2,
+    food.y * boxSize + boxSize / 2,
+    boxSize / 2.8,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+}
+
+function gameOverSnake() {
+  clearInterval(snakeInterval);
+  snakeInterval = null;
+
+  document.getElementById("snakeMessage").innerText = "Ulangi lagi";
+  drawSnakeBoard();
+
+  snakeRestartTimeout = setTimeout(() => {
+    startSnakeGame();
+  }, 800);
 }
 
 function randomFood() {
-  return {
-    x: Math.floor(Math.random() * 20),
-    y: Math.floor(Math.random() * 20)
-  };
+  let newFood;
+
+  do {
+    newFood = {
+      x: Math.floor(Math.random() * snakeGrid),
+      y: Math.floor(Math.random() * snakeGrid)
+    };
+  } while (snake.some(part => part.x === newFood.x && part.y === newFood.y));
+
+  return newFood;
 }
 
 function changeDirection(dir) {
-  if (dir === "up" && direction !== "down") nextDirection = "up";
-  if (dir === "down" && direction !== "up") nextDirection = "down";
-  if (dir === "left" && direction !== "right") nextDirection = "left";
-  if (dir === "right" && direction !== "left") nextDirection = "right";
+  const activeDirection = nextDirection || direction;
+
+  if (dir === "up" && activeDirection !== "down") nextDirection = "up";
+  if (dir === "down" && activeDirection !== "up") nextDirection = "down";
+  if (dir === "left" && activeDirection !== "right") nextDirection = "left";
+  if (dir === "right" && activeDirection !== "left") nextDirection = "right";
 }
 
 document.addEventListener("keydown", e => {
-  if (e.key === "ArrowUp") changeDirection("up");
-  if (e.key === "ArrowDown") changeDirection("down");
-  if (e.key === "ArrowLeft") changeDirection("left");
-  if (e.key === "ArrowRight") changeDirection("right");
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+    changeDirection("up");
+  }
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    changeDirection("down");
+  }
+
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    changeDirection("left");
+  }
+
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    changeDirection("right");
+  }
 });
 
 /* LEVEL 6 - CARI PERBEDAAN */
